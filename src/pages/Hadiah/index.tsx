@@ -9,68 +9,74 @@ import {
 import React, { Component, Fragment } from "react"
 import { Header } from "semantic-ui-react"
 import ErrorMessage from "../../components/ErrorMessage"
-import { AdminService } from "../../services/AdminService"
+import { HadiahService } from "../../services/HadiahService"
 
 interface IState {
-  admin: IAdmin[]
+  hadiah: IHadiah[]
   loading: boolean
   error?: Error
 }
 
-export default class Admin extends Component<{}, IState> {
+export default class Hadiah extends Component<{}, IState> {
   public state: IState = {
-    admin: [],
+    hadiah: [],
     loading: false,
   }
 
-  public adminService = new AdminService()
+  public hadiahService = new HadiahService()
 
   public componentDidMount() {
-    this.getAdmin()
+    this.getHadiah()
   }
 
-  public getAdmin = () => {
+  public getHadiah = () => {
     this.setState({ loading: true })
-    this.adminService
+    this.hadiahService
       .get()
-      .then((admin) => this.setState({ admin }))
+      .then((hadiah) => this.setState({ hadiah }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }))
   }
 
-  public createAdmin = (input: IAdmin) => {
+  public createHadiah = (input: IHadiah) => {
     this.setState({ loading: true })
-    this.adminService
+    this.hadiahService
       .create(input)
-      .then(this.getAdmin)
+      .then(this.getHadiah)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public deleteAdmin = (input: IAdmin) => {
+  public updateHadiah = (input: IHadiah) => {
     this.setState({ loading: true })
-    this.adminService
+    this.hadiahService
+      .update(input, input._id)
+      .then(this.getHadiah)
+      .catch((error) => this.setState({ error, loading: false }))
+  }
+
+  public deleteHadiah = (input: IHadiah) => {
+    this.setState({ loading: true })
+    this.hadiahService
       .delete(input._id)
-      .then(this.getAdmin)
+      .then(this.getHadiah)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
   public render() {
     const schema: ISchema = {
-      username: {
-        label: "Username",
+      judul: {
+        label: "Judul",
         validations: [Validation.required],
       },
-      password: {
-        label: "Password",
-        type: "password",
-        validations: [Validation.required],
-        hideOnTable: true,
+      nominal: {
+        label: "Nominal",
+        validations: [Validation.required, Validation.numeric],
       },
     }
 
     return (
       <Fragment>
-        <Header content="Admin" subheader="Kumpulan data admin" />
+        <Header content="Hadiah" subheader="Kumpulan data hadiah" />
         <ErrorMessage
           error={this.state.error}
           onDismiss={() => this.setState({ error: undefined })}
@@ -78,16 +84,20 @@ export default class Admin extends Component<{}, IState> {
 
         <Container schema={schema}>
           <CreateButton text="Tambah" />
-          <Table.Container data={this.state.admin} loading={this.state.loading}>
+          <Table.Container
+            data={this.state.hadiah}
+            loading={this.state.loading}
+          >
             <Table.Search placeholder="Pencarian" />
             <Table.Limiter text="Item Per Halaman" />
             <Table.Display emptyText="Data Kosong" />
           </Table.Container>
           <Form
-            createTitle="Tambah Admin"
-            updateTitle="Ubah Admin"
-            onCreate={this.createAdmin}
-            onDelete={this.deleteAdmin}
+            createTitle="Tambah Hadiah"
+            updateTitle="Ubah Hadiah"
+            onCreate={this.createHadiah}
+            onUpdate={this.updateHadiah}
+            onDelete={this.deleteHadiah}
           />
         </Container>
       </Fragment>

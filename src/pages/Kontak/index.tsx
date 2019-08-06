@@ -9,68 +9,74 @@ import {
 import React, { Component, Fragment } from "react"
 import { Header } from "semantic-ui-react"
 import ErrorMessage from "../../components/ErrorMessage"
-import { AdminService } from "../../services/AdminService"
+import { KontakService } from "../../services/KontakService"
 
 interface IState {
-  admin: IAdmin[]
+  kontak: IKontak[]
   loading: boolean
   error?: Error
 }
 
-export default class Admin extends Component<{}, IState> {
+export default class Kontak extends Component<{}, IState> {
   public state: IState = {
-    admin: [],
+    kontak: [],
     loading: false,
   }
 
-  public adminService = new AdminService()
+  public kontakService = new KontakService()
 
   public componentDidMount() {
-    this.getAdmin()
+    this.getKontak()
   }
 
-  public getAdmin = () => {
+  public getKontak = () => {
     this.setState({ loading: true })
-    this.adminService
+    this.kontakService
       .get()
-      .then((admin) => this.setState({ admin }))
+      .then((kontak) => this.setState({ kontak }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }))
   }
 
-  public createAdmin = (input: IAdmin) => {
+  public createKontak = (input: IKontak) => {
     this.setState({ loading: true })
-    this.adminService
+    this.kontakService
       .create(input)
-      .then(this.getAdmin)
+      .then(this.getKontak)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public deleteAdmin = (input: IAdmin) => {
+  public updateKontak = (input: IKontak) => {
     this.setState({ loading: true })
-    this.adminService
+    this.kontakService
+      .update(input, input._id)
+      .then(this.getKontak)
+      .catch((error) => this.setState({ error, loading: false }))
+  }
+
+  public deleteKontak = (input: IKontak) => {
+    this.setState({ loading: true })
+    this.kontakService
       .delete(input._id)
-      .then(this.getAdmin)
+      .then(this.getKontak)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
   public render() {
     const schema: ISchema = {
-      username: {
-        label: "Username",
+      nama: {
+        label: "Nama",
         validations: [Validation.required],
       },
-      password: {
-        label: "Password",
-        type: "password",
-        validations: [Validation.required],
-        hideOnTable: true,
+      telp: {
+        label: "Telpon",
+        validations: [Validation.required, Validation.numeric],
       },
     }
 
     return (
       <Fragment>
-        <Header content="Admin" subheader="Kumpulan data admin" />
+        <Header content="Kontak" subheader="Kumpulan data kontak" />
         <ErrorMessage
           error={this.state.error}
           onDismiss={() => this.setState({ error: undefined })}
@@ -78,16 +84,20 @@ export default class Admin extends Component<{}, IState> {
 
         <Container schema={schema}>
           <CreateButton text="Tambah" />
-          <Table.Container data={this.state.admin} loading={this.state.loading}>
+          <Table.Container
+            data={this.state.kontak}
+            loading={this.state.loading}
+          >
             <Table.Search placeholder="Pencarian" />
             <Table.Limiter text="Item Per Halaman" />
             <Table.Display emptyText="Data Kosong" />
           </Table.Container>
           <Form
-            createTitle="Tambah Admin"
-            updateTitle="Ubah Admin"
-            onCreate={this.createAdmin}
-            onDelete={this.deleteAdmin}
+            createTitle="Tambah Kontak"
+            updateTitle="Ubah Kontak"
+            onCreate={this.createKontak}
+            onUpdate={this.updateKontak}
+            onDelete={this.deleteKontak}
           />
         </Container>
       </Fragment>

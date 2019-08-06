@@ -9,70 +9,78 @@ import {
 import React, { Component, Fragment } from "react"
 import { Header } from "semantic-ui-react"
 import ErrorMessage from "../../components/ErrorMessage"
-import { DivisiService } from "../../services/DivisiService"
+import { MediaPartnerService } from "../../services/MediaPartnerService"
 
 interface IState {
-  divisi: IDivisi[]
+  mediaPartner: IMediaPartner[]
   loading: boolean
   error?: Error
 }
 
-export default class Divisi extends Component<{}, IState> {
+export default class MediaPartner extends Component<{}, IState> {
   public state: IState = {
-    divisi: [],
+    mediaPartner: [],
     loading: false,
   }
 
-  public divisiService = new DivisiService()
+  public mediaPartnerService = new MediaPartnerService()
 
   public componentDidMount() {
-    this.getDivisi()
+    this.getMediaPartner()
   }
 
-  public getDivisi = () => {
+  public getMediaPartner = () => {
     this.setState({ loading: true })
-    this.divisiService
+    this.mediaPartnerService
       .get()
-      .then((divisi) => this.setState({ divisi }))
+      .then((mediaPartner) => this.setState({ mediaPartner }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }))
   }
 
-  public createDivisi = (input: IDivisi) => {
+  public createMediaPartner = (input: IMediaPartner) => {
     this.setState({ loading: true })
-    this.divisiService
+    this.mediaPartnerService
       .create(input)
-      .then(this.getDivisi)
+      .then(this.getMediaPartner)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public updateDivisi = (input: IDivisi) => {
+  public updateMediaPartner = (input: IMediaPartner) => {
     this.setState({ loading: true })
-    this.divisiService
+    this.mediaPartnerService
       .update(input, input._id)
-      .then(this.getDivisi)
+      .then(this.getMediaPartner)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public deleteDivisi = (input: IDivisi) => {
+  public deleteMediaPartner = (input: IMediaPartner) => {
     this.setState({ loading: true })
-    this.divisiService
+    this.mediaPartnerService
       .delete(input._id)
-      .then(this.getDivisi)
+      .then(this.getMediaPartner)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
   public render() {
     const schema: ISchema = {
       nama: {
-        label: "Nama Divisi",
-        validations: [Validation.required, Validation.alpha],
+        label: "Nama",
+        validations: [Validation.required],
+      },
+      logo: {
+        label: "Logo",
+        validations: [Validation.required],
+        hideOnTable: true,
       },
     }
 
     return (
       <Fragment>
-        <Header content="Divisi" subheader="Kumpulan data divisi" />
+        <Header
+          content="Media Partner"
+          subheader="Kumpulan data media partner"
+        />
         <ErrorMessage
           error={this.state.error}
           onDismiss={() => this.setState({ error: undefined })}
@@ -81,7 +89,7 @@ export default class Divisi extends Component<{}, IState> {
         <Container schema={schema}>
           <CreateButton text="Tambah" />
           <Table.Container
-            data={this.state.divisi}
+            data={this.state.mediaPartner}
             loading={this.state.loading}
           >
             <Table.Search placeholder="Pencarian" />
@@ -89,11 +97,11 @@ export default class Divisi extends Component<{}, IState> {
             <Table.Display emptyText="Data Kosong" />
           </Table.Container>
           <Form
-            createTitle="Tambah Divisi"
-            updateTitle="Ubah Divisi"
-            onCreate={this.createDivisi}
-            onUpdate={this.updateDivisi}
-            onDelete={this.deleteDivisi}
+            createTitle="Tambah Media Partner"
+            updateTitle="Ubah Media Partner"
+            onCreate={this.createMediaPartner}
+            onUpdate={this.updateMediaPartner}
+            onDelete={this.deleteMediaPartner}
           />
         </Container>
       </Fragment>

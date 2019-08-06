@@ -9,77 +9,70 @@ import {
 import React, { Component, Fragment } from "react"
 import { Header } from "semantic-ui-react"
 import ErrorMessage from "../../components/ErrorMessage"
-import { KategoriKegiatanService } from "../../services/KategoriKegiatanService"
+import { UniversitasService } from "../../services/UniversitasService"
 
 interface IState {
-  kategoriKegiatan: IKategoriKegiatan[]
+  universitas: IUniversitas[]
   loading: boolean
   error?: Error
 }
 
-export default class KategoriKegiatan extends Component<{}, IState> {
+export default class Universitas extends Component<{}, IState> {
   public state: IState = {
-    kategoriKegiatan: [],
+    universitas: [],
     loading: false,
   }
 
-  public kategoriKegiatanService = new KategoriKegiatanService()
+  public universitasService = new UniversitasService()
 
   public componentDidMount() {
-    this.getKategoriKegiatan()
+    this.getUniversitas()
   }
 
-  public getKategoriKegiatan = () => {
+  public getUniversitas = () => {
     this.setState({ loading: true })
-    this.kategoriKegiatanService
+    this.universitasService
       .get()
-      .then((kategoriKegiatan) => this.setState({ kategoriKegiatan }))
+      .then((universitas) => this.setState({ universitas }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }))
   }
 
-  public createKategoriKegiatan = (input: IKategoriKegiatan) => {
+  public createUniversitas = (input: IUniversitas) => {
     this.setState({ loading: true })
-    this.kategoriKegiatanService
+    this.universitasService
       .create(input)
-      .then(this.getKategoriKegiatan)
+      .then(this.getUniversitas)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public updateKategoriKegiatan = (input: IKategoriKegiatan) => {
+  public updateUniversitas = (input: IUniversitas) => {
     this.setState({ loading: true })
-    this.kategoriKegiatanService
+    this.universitasService
       .update(input, input._id)
-      .then(this.getKategoriKegiatan)
+      .then(this.getUniversitas)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public deleteKategoriKegiatan = (input: IKategoriKegiatan) => {
+  public deleteUniversitas = (input: IUniversitas) => {
     this.setState({ loading: true })
-    this.kategoriKegiatanService
+    this.universitasService
       .delete(input._id)
-      .then(this.getKategoriKegiatan)
+      .then(this.getUniversitas)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
   public render() {
     const schema: ISchema = {
       nama: {
-        label: "Nama Kategori",
-        validations: [Validation.required],
-      },
-      keterangan: {
-        label: "Keterangan",
+        label: "Nama",
         validations: [Validation.required],
       },
     }
 
     return (
       <Fragment>
-        <Header
-          content="Kategori Kegiatan"
-          subheader="Kumpulan data Kategori Kegiatan"
-        />
+        <Header content="Universitas" subheader="Kumpulan data universitas" />
         <ErrorMessage
           error={this.state.error}
           onDismiss={() => this.setState({ error: undefined })}
@@ -88,7 +81,7 @@ export default class KategoriKegiatan extends Component<{}, IState> {
         <Container schema={schema}>
           <CreateButton text="Tambah" />
           <Table.Container
-            data={this.state.kategoriKegiatan}
+            data={this.state.universitas}
             loading={this.state.loading}
           >
             <Table.Search placeholder="Pencarian" />
@@ -96,11 +89,11 @@ export default class KategoriKegiatan extends Component<{}, IState> {
             <Table.Display emptyText="Data Kosong" />
           </Table.Container>
           <Form
-            createTitle="Tambah Kategori Kegiatan"
-            updateTitle="Ubah Kategori Kegiatan"
-            onCreate={this.createKategoriKegiatan}
-            onUpdate={this.updateKategoriKegiatan}
-            onDelete={this.deleteKategoriKegiatan}
+            createTitle="Tambah Universitas"
+            updateTitle="Ubah Universitas"
+            onCreate={this.createUniversitas}
+            onUpdate={this.updateUniversitas}
+            onDelete={this.deleteUniversitas}
           />
         </Container>
       </Fragment>

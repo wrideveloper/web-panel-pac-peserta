@@ -1,4 +1,87 @@
-declare interface IRoute {
+interface IHadiah {
+  _id: string
+  judul: string
+  nominal: number
+}
+
+interface IKontak {
+  _id: string
+  nama: string
+  telp: string
+}
+
+interface IMediaPartner {
+  _id: string
+  nama: string
+  logo: string
+}
+
+interface IPeserta {
+  _id: string
+  nama: string
+  nim: string
+  ktm: string
+  foto: string
+  tim: ITim
+}
+
+interface ISupportedBy {
+  _id: string
+  nama: string
+  logo: string
+}
+
+interface ITim {
+  _id: string
+  nama: string
+  universitas: IUniversitas
+  ketua: IPeserta
+  email: string
+  telp: string
+  username: string
+  password: string
+  status: IStatus
+}
+
+interface IStatus {
+  _id: string
+  nama: string
+}
+
+interface IJenisPengumpulan {
+  _id: string
+  nama: string
+  timeline: ITimeline
+  status: IStatus
+}
+
+interface IPengumpulan {
+  _id: string
+  jenisPengumpulan: IJenisPengumpulan
+  file: string
+  tim: ITim
+}
+
+interface ITimeline {
+  _id: string
+  nama: string
+  tgl_mulai: Date
+  tgl_selesai: Date
+  deskripsi: string
+}
+
+interface IUniversitas {
+  _id: string
+  nama: string
+}
+
+interface IAdmin {
+  _id: string
+  username: string
+  password: string
+}
+
+interface IRoute {
   name: string
   label?: string
   icon?: string
@@ -8,78 +91,7 @@ declare interface IRoute {
   private?: boolean
 }
 
-declare interface IAnggota {
-  _id: string
-  nim: number
-  nama: string
-  email: string
-  kontak: string
-  angkatan: number
-  foto?: string | File
-  jabatan?: IJabatan
-  divisi?: IDivisi
-  miniclass?: IMiniclass
-}
-
-declare interface IDivisi {
-  _id: string
-  nama: string
-}
-
-declare interface IJabatan {
-  _id: string
-  nama: string
-}
-
-declare interface IMiniclass {
-  _id: string
-  nama: string
-  divisi: IDivisi
-}
-
-declare interface IPresensi {
-  _id: string
-  topik: string
-  miniclass: IMiniclass
-  angkatan: number
-  tanggal: Date
-  peserta: string[]
-}
-
-declare interface IKategoriKegiatan {
-  _id: string
-  nama: string
-  keterangan: string
-}
-
-declare interface IKegiatan {
-  _id: string
-  nama: string
-  laporan: string
-  kategoriKegiatan: IKategoriKegiatan
-}
-
-declare interface INomorSurat {
-  _id: string
-  nomor: string
-  keperluan: string
-  anggota: IAnggota
-}
-
-declare interface IAdmin {
-  _id: string
-  username: string
-  password: string
-  level: ILevel
-}
-
-declare interface ILevel {
-  _id: string
-  nama: string
-  hakAkses: string[]
-}
-
-declare interface IAppContext {
+interface IAppContext {
   token: string
   user: IAdmin
   login: (token: string, user: IAdmin, callback: () => void) => void
@@ -90,5 +102,4 @@ declare interface IAppContext {
 interface ILogin {
   success: boolean
   token?: string
-  user?: IAdmin
 }

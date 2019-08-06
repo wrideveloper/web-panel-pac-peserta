@@ -1,8 +1,9 @@
+import jwt from "jsonwebtoken"
 import React, { Component } from "react"
 import { RouteComponentProps } from "react-router"
 import { Button, Card, Form, Header, Input, Loader } from "semantic-ui-react"
 import { Consumer } from "../../App"
-import { LoginService } from "../../services/LoginService"
+import { AdminService } from "../../services/AdminService"
 
 interface IState {
   input: {
@@ -21,7 +22,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
     loading: false,
   }
 
-  public loginService = new LoginService()
+  public userService = new AdminService()
 
   public redirectIfAuthenticated(isLoggedIn: boolean) {
     if (isLoggedIn) this.props.history.push("/")
@@ -43,10 +44,10 @@ export default class Login extends Component<RouteComponentProps, IState> {
     const { username, password } = this.state.input
 
     this.setState({ loading: true })
-    this.loginService.login(username, password).then((data) => {
+    this.userService.login(username, password).then((data) => {
       this.setState({ loading: false })
-      if (data.success) {
-        context.login(data.token!, data.user!, () => {
+      if (data.success && data.token) {
+        context.login(data.token, (jwt.decode(data.token) as any).data, () => {
           this.props.history.push("/")
         })
       } else {
@@ -75,7 +76,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
                 <Card.Content>
                   <Card.Header textAlign="center">
                     <Header
-                      content="Crew Monitoring"
+                      content="PAC Web Panel"
                       icon="user circle outline"
                     />
                   </Card.Header>

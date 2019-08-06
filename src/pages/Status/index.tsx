@@ -9,70 +9,73 @@ import {
 import React, { Component, Fragment } from "react"
 import { Header } from "semantic-ui-react"
 import ErrorMessage from "../../components/ErrorMessage"
-import { JabatanService } from "../../services/JabatanService"
+import { StatusService } from "../../services/StatusService"
 
 interface IState {
-  jabatan: IJabatan[]
+  status: IStatus[]
   loading: boolean
   error?: Error
 }
 
-export default class Jabatan extends Component<{}, IState> {
+export default class Status extends Component<{}, IState> {
   public state: IState = {
-    jabatan: [],
+    status: [],
     loading: false,
   }
 
-  public jabatanService = new JabatanService()
+  public statusService = new StatusService()
 
   public componentDidMount() {
-    this.getJabatan()
+    this.getStatus()
   }
 
-  public getJabatan = () => {
+  public getStatus = () => {
     this.setState({ loading: true })
-    this.jabatanService
+    this.statusService
       .get()
-      .then((jabatan) => this.setState({ jabatan }))
+      .then((status) => this.setState({ status }))
       .catch((error) => this.setState({ error }))
       .finally(() => this.setState({ loading: false }))
   }
 
-  public createJabatan = (input: IJabatan) => {
+  public createStatus = (input: IStatus) => {
     this.setState({ loading: true })
-    this.jabatanService
+    this.statusService
       .create(input)
-      .then(this.getJabatan)
+      .then(this.getStatus)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public updateJabatan = (input: IJabatan) => {
+  public updateStatus = (input: IStatus) => {
     this.setState({ loading: true })
-    this.jabatanService
+    this.statusService
       .update(input, input._id)
-      .then(this.getJabatan)
+      .then(this.getStatus)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
-  public deleteJabatan = (input: IJabatan) => {
+  public deleteStatus = (input: IStatus) => {
     this.setState({ loading: true })
-    this.jabatanService
+    this.statusService
       .delete(input._id)
-      .then(this.getJabatan)
+      .then(this.getStatus)
       .catch((error) => this.setState({ error, loading: false }))
   }
 
   public render() {
     const schema: ISchema = {
       nama: {
-        label: "Nama Jabatan",
+        label: "Nama",
         validations: [Validation.required],
       },
     }
 
     return (
       <Fragment>
-        <Header content="Jabatan" subheader="Kumpulan data jabatan" />
+        <Header
+          content="Data Status Tim"
+          subheader="Kumpulan data status tim"
+        />
         <ErrorMessage
           error={this.state.error}
           onDismiss={() => this.setState({ error: undefined })}
@@ -81,7 +84,7 @@ export default class Jabatan extends Component<{}, IState> {
         <Container schema={schema}>
           <CreateButton text="Tambah" />
           <Table.Container
-            data={this.state.jabatan}
+            data={this.state.status}
             loading={this.state.loading}
           >
             <Table.Search placeholder="Pencarian" />
@@ -89,11 +92,11 @@ export default class Jabatan extends Component<{}, IState> {
             <Table.Display emptyText="Data Kosong" />
           </Table.Container>
           <Form
-            createTitle="Tambah Jabatan"
-            updateTitle="Ubah Jabatan"
-            onCreate={this.createJabatan}
-            onUpdate={this.updateJabatan}
-            onDelete={this.deleteJabatan}
+            createTitle="Tambah Status"
+            updateTitle="Ubah Status"
+            onCreate={this.createStatus}
+            onUpdate={this.updateStatus}
+            onDelete={this.deleteStatus}
           />
         </Container>
       </Fragment>

@@ -39,7 +39,7 @@ class App extends Component {
     localStorage.removeItem("authToken")
     localStorage.removeItem("authUser")
     this.setState({ token: undefined, user: undefined })
-    window.location.href = "/"
+    window.location.href = "/login"
   }
 
   public isLoggedIn = () => {
@@ -48,9 +48,16 @@ class App extends Component {
 
   public renderRoutes() {
     return routes.map((route) => {
-      const AppRoute = route.private ? PrivateRoute : Route
-      return (
-        <AppRoute
+      return route.private ? (
+        <PrivateRoute
+          name={route.name}
+          path={route.path}
+          component={route.component}
+          exact
+          key={route.path}
+        />
+      ) : (
+        <Route
           name={route.name}
           path={route.path}
           component={route.component}
@@ -71,7 +78,7 @@ class App extends Component {
     }
     return (
       <Provider value={providerValue}>
-        <BrowserRouter basename="/pamdal">
+        <BrowserRouter>
           <Grid columns="2" style={styles.container}>
             {this.isLoggedIn() && (
               <Grid.Column width="3">

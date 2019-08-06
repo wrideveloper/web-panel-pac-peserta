@@ -8,7 +8,7 @@ class Menubar extends Component {
     return (
       <Consumer>
         {(context) => (
-          <Menu fixed="top" inverted color="orange" borderless>
+          <Menu fixed="top" inverted color="blue" borderless>
             <AppTitle />
             <Menu.Menu position="right">
               <Dropdown item text={context.user.username} pointing>

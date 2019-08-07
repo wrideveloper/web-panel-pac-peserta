@@ -3,7 +3,7 @@ import React, { Component } from "react"
 import { RouteComponentProps } from "react-router"
 import { Button, Card, Form, Header, Input, Loader } from "semantic-ui-react"
 import { Consumer } from "../../App"
-import { AdminService } from "../../services/AdminService"
+import { TimService } from "../../services/TimService"
 
 interface IState {
   input: {
@@ -22,7 +22,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
     loading: false,
   }
 
-  public userService = new AdminService()
+  public timService = new TimService()
 
   public redirectIfAuthenticated(isLoggedIn: boolean) {
     if (isLoggedIn) this.props.history.push("/")
@@ -44,7 +44,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
     const { username, password } = this.state.input
 
     this.setState({ loading: true })
-    this.userService.login(username, password).then((data) => {
+    this.timService.login(username, password).then((data) => {
       this.setState({ loading: false })
       if (data.success && data.token) {
         context.login(data.token, (jwt.decode(data.token) as any).data, () => {

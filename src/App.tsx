@@ -1,24 +1,24 @@
 import React, { Component } from "react"
-import { BrowserRouter, Route } from "react-router-dom"
+import { BrowserRouter, Redirect, Route } from "react-router-dom"
 import { Grid } from "semantic-ui-react"
 import Menubar from "./components/Layouts/Menubar"
 import Navigation from "./components/Layouts/Navigation"
 import PrivateRoute from "./components/PrivateRoute"
 import { routes } from "./config"
 
-const context = React.createContext<IAppContext>({
+const appContext = React.createContext<IAppContext>({
   token: "",
-  user: {} as IAdmin,
+  user: {} as ITim,
   login: () => undefined,
   logout: () => undefined,
   isLoggedIn: () => false,
 })
 
-const { Provider, Consumer } = context
+const { Provider, Consumer } = appContext
 
 interface IState {
   token: string
-  user: IAdmin
+  user: ITim
 }
 
 class App extends Component {
@@ -27,7 +27,7 @@ class App extends Component {
     user: JSON.parse(localStorage.getItem("authUser") || "{}"),
   }
 
-  public login = (token: string, user: IAdmin, callback: () => void) => {
+  public login = (token: string, user: ITim, callback: () => void) => {
     this.setState({ token, user }, () => {
       localStorage.setItem("authToken", token)
       localStorage.setItem("authUser", JSON.stringify(user))
@@ -88,7 +88,10 @@ class App extends Component {
 
             <Grid.Column width="13">
               {this.isLoggedIn() && <Menubar />}
-              <div style={styles.pageContainer}>{this.renderRoutes()}</div>
+              <div style={styles.pageContainer}>
+                {this.renderRoutes()}
+                <Route render={() => <Redirect to="/login" />} />
+              </div>
             </Grid.Column>
           </Grid>
         </BrowserRouter>
@@ -109,5 +112,5 @@ const styles = {
   },
 }
 
-export { Consumer }
+export { appContext, Consumer }
 export default App

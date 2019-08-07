@@ -93,8 +93,8 @@ interface IRoute {
 
 interface IAppContext {
   token: string
-  user: IAdmin
-  login: (token: string, user: IAdmin, callback: () => void) => void
+  user: ITim
+  login: (token: string, user: ITim, callback: () => void) => void
   logout: () => void
   isLoggedIn: () => boolean
 }

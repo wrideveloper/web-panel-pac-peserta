@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import React, { Component } from "react"
 import { RouteComponentProps } from "react-router"
+import { Link } from "react-router-dom"
 import { Button, Card, Form, Header, Input, Loader } from "semantic-ui-react"
 import { Consumer } from "../../App"
 import { TimService } from "../../services/TimService"
@@ -111,6 +112,10 @@ export default class Login extends Component<RouteComponentProps, IState> {
                     content={this.getLoginButtonText()}
                     onClick={() => this.login(context)}
                   />
+                  <br />
+                  <Link to="/register">
+                    <Button color="orange" fluid content="Daftar" />
+                  </Link>
                 </Card.Content>
               </Card>
             </div>

@@ -1,5 +1,6 @@
 import Login from "../pages/Login"
 import Pengumpulan from "../pages/Pengumpulan"
+import Register from "../pages/Register"
 
 const routes: IRoute[] = [
   {
@@ -14,6 +15,12 @@ const routes: IRoute[] = [
     name: "login",
     component: Login,
     path: "/login",
+    hide: true,
+  },
+  {
+    name: "register",
+    component: Register,
+    path: "/register",
     hide: true,
   },
 ]

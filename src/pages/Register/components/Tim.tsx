@@ -1,6 +1,6 @@
-import { Field, FieldProps } from "formik"
+import { ErrorMessage, Field, FieldProps } from "formik"
 import React, { Component } from "react"
-import { Form, Input, Select } from "semantic-ui-react"
+import { Form, Input, Message, Select } from "semantic-ui-react"
 import { UniversitasService } from "../../../services/UniversitasService"
 
 interface IState {
@@ -41,6 +41,10 @@ export class Tim extends Component<{}, IState> {
               <Input {...field} label="Nama" />
             )}
           />
+          <ErrorMessage
+            name="nama"
+            render={(message) => <Message content={message} color="red" />}
+          />
         </Form.Field>
 
         <Form.Field>
@@ -49,6 +53,10 @@ export class Tim extends Component<{}, IState> {
             render={({ field }: FieldProps) => (
               <Input {...field} label="Nama Aplikasi" />
             )}
+          />
+          <ErrorMessage
+            name="namaAplikasi"
+            render={(message) => <Message content={message} color="red" />}
           />
         </Form.Field>
 
@@ -60,12 +68,17 @@ export class Tim extends Component<{}, IState> {
                 name="universitas"
                 options={this.getUniversitasOptions()}
                 placeholder="Pilih Universitas"
+                value={form.values.universitas}
                 search
                 onBlur={() => form.setFieldTouched("universitas", true)}
                 onChange={(event, { value }) =>
                   form.setFieldValue("universitas", value)}
               />
             )}
+          />
+          <ErrorMessage
+            name="universitas"
+            render={(message) => <Message content={message} color="red" />}
           />
         </Form.Field>
       </>

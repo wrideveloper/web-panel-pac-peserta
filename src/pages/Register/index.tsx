@@ -11,6 +11,9 @@ import {
 import { SemanticICONS } from "semantic-ui-react/dist/commonjs/generic"
 
 import { Formik } from "formik"
+import * as yup from "yup"
+import { PesertaService } from "../../services/PesertaService"
+import { TimService } from "../../services/TimService"
 import { Akun, Anggota, Ketua, Tim } from "./components"
 
 interface IStep {
@@ -58,6 +61,7 @@ interface IFormState {
   password: string
   konfirmasi: string
   peserta: Array<{
+    _id: string
     nama: string
     nim: string
     ktm: File
@@ -79,6 +83,38 @@ const initialValues: IFormState = {
   peserta: [],
 }
 
+const validationSchema = yup.object().shape({
+  nama: yup.string().required(),
+  namaAplikasi: yup
+    .string()
+    .required()
+    .label("nama aplikasi"),
+  universitas: yup.string().required(),
+  ketua: yup.string().required(),
+  email: yup
+    .string()
+    .email()
+    .required(),
+  telp: yup.string().required(),
+  username: yup
+    .string()
+    .required()
+    .min(6),
+  password: yup
+    .string()
+    .required()
+    .min(6),
+  konfirmasi: yup
+    .string()
+    .oneOf([yup.ref("password")], "wrong confirmation password")
+    .required(),
+  peserta: yup
+    .array()
+    .required()
+    .min(2)
+    .max(3),
+})
+
 interface IState {
   step: number
 }
@@ -87,6 +123,9 @@ export default class Register extends Component<{}, IState> {
   public state: IState = {
     step: 0,
   }
+
+  public timService = new TimService()
+  public pesertaService = new PesertaService()
 
   public nextStep = () => {
     if (this.state.step < steps.length - 1)
@@ -100,6 +139,16 @@ export default class Register extends Component<{}, IState> {
       this.setState((prevState) => ({
         step: prevState.step - 1,
       }))
+  }
+
+  public submit = (values: IFormState) => {
+    const { konfirmasi, peserta, ...rest } = values
+    this.timService.create(rest as any).then((tim) => {
+      peserta.forEach((item) => {
+        item.tim = tim._id
+        this.pesertaService.daftar(item as any, tim._id)
+      })
+    })
   }
 
   public render() {
@@ -126,7 +175,8 @@ export default class Register extends Component<{}, IState> {
 
           <Formik
             initialValues={initialValues}
-            onSubmit={(value) => alert(JSON.stringify(value))}
+            onSubmit={this.submit}
+            validationSchema={validationSchema}
           >
             {({ handleSubmit }) => (
               <Form onSubmit={handleSubmit}>
@@ -160,10 +210,13 @@ export default class Register extends Component<{}, IState> {
                     </Button>
                   </Grid.Column>
 
-                  <Grid.Column textAlign="right">
-                    {this.state.step === steps.length - 1 && (
-                      <Button type="submit" color="green" content="Selesai" />
-                    )}
+                  <Grid.Column>
+                    <Button
+                      type="submit"
+                      color="green"
+                      content="Selesai"
+                      floated="right"
+                    />
                   </Grid.Column>
                 </Grid>
               </Form>

@@ -1,4 +1,6 @@
+import { ObjectID } from "bson"
 import {
+  ErrorMessage,
   Field,
   FieldArray,
   FieldArrayRenderProps,
@@ -7,6 +9,8 @@ import {
 } from "formik"
 import React, { Component } from "react"
 import { Button, Card, Form, Grid, Input, Message } from "semantic-ui-react"
+
+import * as yup from "yup"
 
 interface IFormState {
   nim: string
@@ -21,17 +25,38 @@ const initialValues: IFormState = {
 }
 
 export class Anggota extends Component {
+  public addPeserta(peserta: any, fieldArray: FieldArrayRenderProps) {
+    peserta._id = new ObjectID().toHexString()
+    fieldArray.push(peserta)
+  }
+
+  public getValidationSchema(nim: string[]) {
+    return yup.object().shape({
+      nim: yup
+        .string()
+        .required()
+        .notOneOf(nim),
+      nama: yup.string().required(),
+    })
+  }
+
   public render() {
     return (
       <FieldArray name="peserta">
-        {({ push, remove, form }) => (
+        {(fieldArray) => (
           <Grid columns="2" celled="internally">
             <Grid.Column>
               <Message
                 info
                 content="Masukkan data anggota tim, termasuk ketua tim"
               />
-              <Formik initialValues={initialValues} onSubmit={push}>
+              <Formik
+                initialValues={initialValues}
+                onSubmit={(peserta) => this.addPeserta(peserta, fieldArray)}
+                validationSchema={this.getValidationSchema(
+                  fieldArray.form.values.peserta.map((item: any) => item.nim),
+                )}
+              >
                 {({ handleSubmit }) => (
                   <Form
                     onSubmit={(e) => {
@@ -39,53 +64,71 @@ export class Anggota extends Component {
                       handleSubmit(e)
                     }}
                   >
-                    <Form.Group>
+                    <Form.Field>
                       <Field
                         name="nim"
                         render={({ field }: FieldProps) => (
                           <Input {...field} label="NIM" />
                         )}
                       />
-                    </Form.Group>
+                      <ErrorMessage
+                        name="nim"
+                        render={(message) => (
+                          <Message content={message} color="red" />
+                        )}
+                      />
+                    </Form.Field>
 
-                    <Form.Group>
+                    <Form.Field>
                       <Field
                         name="nama"
                         render={({ field }: FieldProps) => (
                           <Input {...field} label="Nama" />
                         )}
                       />
-                    </Form.Group>
+                      <ErrorMessage
+                        name="nama"
+                        render={(message) => (
+                          <Message content={message} color="red" />
+                        )}
+                      />
+                    </Form.Field>
 
-                    <Form.Group>
+                    <Form.Field>
                       <Button
                         type="submit"
                         color="green"
                         content="Tambahkan Anggota"
                       />
-                    </Form.Group>
+                    </Form.Field>
                   </Form>
                 )}
               </Formik>
             </Grid.Column>
             <Grid.Column>
-              {form.values.peserta.map((item: any, index: number) => (
-                <Card>
-                  <Card.Content>
-                    <Card.Header>{item.nama}</Card.Header>
-                    <Card.Meta>{item.nim}</Card.Meta>
-                  </Card.Content>
-                  <Card.Content extra>
-                    <Button
-                      type="button"
-                      color="red"
-                      content="Hapus"
-                      basic
-                      onClick={() => remove(index)}
-                    />
-                  </Card.Content>
-                </Card>
-              ))}
+              <ErrorMessage
+                name="peserta"
+                render={(message) => <Message content={message} color="red" />}
+              />
+              {fieldArray.form.values.peserta.map(
+                (item: any, index: number) => (
+                  <Card>
+                    <Card.Content>
+                      <Card.Header>{item.nama}</Card.Header>
+                      <Card.Meta>{item.nim}</Card.Meta>
+                    </Card.Content>
+                    <Card.Content extra>
+                      <Button
+                        type="button"
+                        color="red"
+                        content="Hapus"
+                        basic
+                        onClick={() => fieldArray.remove(index)}
+                      />
+                    </Card.Content>
+                  </Card>
+                ),
+              )}
             </Grid.Column>
           </Grid>
         )}

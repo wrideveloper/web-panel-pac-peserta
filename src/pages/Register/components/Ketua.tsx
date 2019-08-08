@@ -1,6 +1,6 @@
-import { Field, FieldProps } from "formik"
+import { ErrorMessage, Field, FieldProps } from "formik"
 import React, { Component } from "react"
-import { Form, Input, Select } from "semantic-ui-react"
+import { Form, Input, Message, Select } from "semantic-ui-react"
 
 export class Ketua extends Component {
   public render() {
@@ -11,18 +11,23 @@ export class Ketua extends Component {
             name="ketua"
             render={({ form }: FieldProps) => (
               <Select
-                name="universitas"
+                name="ketua"
                 options={form.values.peserta.map((item: any) => ({
-                  value: item.nim,
+                  value: item._id,
                   text: item.nama,
                 }))}
                 placeholder="Pilih Ketua Tim"
+                value={form.values.ketua}
                 search
                 onBlur={() => form.setFieldTouched("ketua", true)}
                 onChange={(event, { value }) =>
                   form.setFieldValue("ketua", value)}
               />
             )}
+          />
+          <ErrorMessage
+            name="ketua"
+            render={(message) => <Message content={message} color="red" />}
           />
         </Form.Field>
 
@@ -33,6 +38,10 @@ export class Ketua extends Component {
               <Input {...field} label="Email" />
             )}
           />
+          <ErrorMessage
+            name="email"
+            render={(message) => <Message content={message} color="red" />}
+          />
         </Form.Field>
 
         <Form.Field>
@@ -41,6 +50,10 @@ export class Ketua extends Component {
             render={({ field }: FieldProps) => (
               <Input {...field} label="Telpon" />
             )}
+          />
+          <ErrorMessage
+            name="telp"
+            render={(message) => <Message content={message} color="red" />}
           />
         </Form.Field>
       </>

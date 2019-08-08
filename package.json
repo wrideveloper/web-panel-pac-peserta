@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/bson": "^4.0.0",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/validator": "^10.9.0",
     "axios": "^0.18.0",
+    "bson": "^4.0.2",
     "crudone": "^1.0.2",
     "formik": "^1.5.8",
     "jsonwebtoken": "^8.5.1",

@@ -34,9 +34,9 @@ export class Anggota extends Component {
     return yup.object().shape({
       nim: yup
         .string()
-        .required()
-        .notOneOf(nim),
-      nama: yup.string().required(),
+        .required("nim wajib diisi")
+        .notOneOf(nim, "nim sudah ada"),
+      nama: yup.string().required("nama wajib diisi"),
     })
   }
 

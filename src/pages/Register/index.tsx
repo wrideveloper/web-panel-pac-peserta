@@ -6,11 +6,13 @@ import {
   Form,
   Grid,
   Icon,
+  Loader,
   Step,
 } from "semantic-ui-react"
 import { SemanticICONS } from "semantic-ui-react/dist/commonjs/generic"
 
 import { Formik } from "formik"
+import { RouteComponentProps } from "react-router"
 import * as yup from "yup"
 import { PesertaService } from "../../services/PesertaService"
 import { TimService } from "../../services/TimService"
@@ -84,44 +86,43 @@ const initialValues: IFormState = {
 }
 
 const validationSchema = yup.object().shape({
-  nama: yup.string().required(),
-  namaAplikasi: yup
-    .string()
-    .required()
-    .label("nama aplikasi"),
-  universitas: yup.string().required(),
-  ketua: yup.string().required(),
+  nama: yup.string().required("nama wajib diisi"),
+  namaAplikasi: yup.string().required("nama aplikasi wajib diisi"),
+  universitas: yup.string().required("universitas wajib diisi"),
+  ketua: yup.string().required("ketua wajib diisi"),
   email: yup
     .string()
-    .email()
-    .required(),
-  telp: yup.string().required(),
+    .email("format email tidak benar")
+    .required("email wajib diisi"),
+  telp: yup.string().required("telpon wajib diisi"),
   username: yup
     .string()
-    .required()
-    .min(6),
+    .required("username wajib diisi")
+    .min(6, "minimal 6 karakter"),
   password: yup
     .string()
-    .required()
-    .min(6),
+    .required("password wajib diisi")
+    .min(6, "minimal 6 karakter"),
   konfirmasi: yup
     .string()
-    .oneOf([yup.ref("password")], "wrong confirmation password")
-    .required(),
+    .oneOf([yup.ref("password")], "konfirmasi password salah")
+    .required("konfirmasi password wajib diisi"),
   peserta: yup
     .array()
-    .required()
-    .min(2)
-    .max(3),
+    .required("anggota tim wajib diisi")
+    .min(2, "jumlah anggota tim minimal 2 orang")
+    .max(3, "jumlah anggota tim maksimal 3 orang"),
 })
 
 interface IState {
   step: number
+  loading: boolean
 }
 
-export default class Register extends Component<{}, IState> {
+export default class Register extends Component<RouteComponentProps, IState> {
   public state: IState = {
     step: 0,
+    loading: false,
   }
 
   public timService = new TimService()
@@ -142,11 +143,17 @@ export default class Register extends Component<{}, IState> {
   }
 
   public submit = (values: IFormState) => {
+    this.setState({ loading: true })
     const { konfirmasi, peserta, ...rest } = values
     this.timService.create(rest as any).then((tim) => {
+      const promise: Array<Promise<IPeserta>> = []
       peserta.forEach((item) => {
         item.tim = tim._id
-        this.pesertaService.daftar(item as any, tim._id)
+        promise.push(this.pesertaService.daftar(item as any, tim._id))
+      })
+      Promise.all(promise).then(() => {
+        this.setState({ loading: false })
+        this.props.history.push("/login")
       })
     })
   }
@@ -214,7 +221,13 @@ export default class Register extends Component<{}, IState> {
                     <Button
                       type="submit"
                       color="green"
-                      content="Selesai"
+                      content={
+                        this.state.loading ? (
+                          <Loader active inline inverted size="small" />
+                        ) : (
+                          "Selesai"
+                        )
+                      }
                       floated="right"
                     />
                   </Grid.Column>

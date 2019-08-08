@@ -42,10 +42,7 @@ export default class JenisPengumpulan extends Component<{}, IState> {
       (item) =>
         item.status._id === id &&
         date.getTime() >= new Date(item.timeline.tgl_mulai).getTime() &&
-        date.getTime() <= new Date(item.timeline.tgl_selesai).getTime() &&
-        this.state.pengumpulan.filter(
-          (item2) => item2.jenisPengumpulan._id === item._id,
-        ).length === 0,
+        date.getTime() <= new Date(item.timeline.tgl_selesai).getTime(),
     )
   }
 
@@ -62,6 +59,14 @@ export default class JenisPengumpulan extends Component<{}, IState> {
     this.setState({ loading: true })
     this.pengumpulanService
       .create(input)
+      .then(this.getPengumpulan)
+      .catch((error) => this.setState({ error, loading: false }))
+  }
+
+  public updatePengumpulan = (input: IPengumpulan) => {
+    this.setState({ loading: true })
+    this.pengumpulanService
+      .update(input, input._id)
       .then(this.getPengumpulan)
       .catch((error) => this.setState({ error, loading: false }))
   }
@@ -114,6 +119,8 @@ export default class JenisPengumpulan extends Component<{}, IState> {
           <Form
             createTitle="Tambah Pengumpulan"
             onCreate={this.createPengumpulan}
+            onUpdate={this.updatePengumpulan}
+            onDelete={this.deletePengumpulan}
           />
         </Container>
       </Fragment>

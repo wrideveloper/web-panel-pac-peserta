@@ -34,6 +34,7 @@ interface ISupportedBy {
 interface ITim {
   _id: string
   nama: string
+  namaAplikasi: string
   universitas: IUniversitas
   ketua: IPeserta
   email: string

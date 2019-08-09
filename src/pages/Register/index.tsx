@@ -11,7 +11,7 @@ import {
 } from "semantic-ui-react"
 import { SemanticICONS } from "semantic-ui-react/dist/commonjs/generic"
 
-import { Formik } from "formik"
+import { Formik, FormikActions } from "formik"
 import { RouteComponentProps } from "react-router"
 import * as yup from "yup"
 import { PesertaService } from "../../services/PesertaService"
@@ -142,19 +142,27 @@ export default class Register extends Component<RouteComponentProps, IState> {
       }))
   }
 
-  public submit = (values: IFormState) => {
+  public submit = (
+    values: IFormState,
+    formikAction: FormikActions<IFormState>,
+  ) => {
     this.setState({ loading: true })
     const { konfirmasi, peserta, ...rest } = values
-    this.timService.create(rest as any).then((tim) => {
-      const promise: Array<Promise<IPeserta>> = []
-      peserta.forEach((item) => {
-        item.tim = tim._id
-        promise.push(this.pesertaService.daftar(item as any, tim._id))
-      })
-      Promise.all(promise).then(() => {
+    this.timService.create(rest as any).then((tim: any) => {
+      if (tim.message) {
+        formikAction.setFieldError("username", "username sudah ada")
         this.setState({ loading: false })
-        this.props.history.push("/login")
-      })
+      } else {
+        const promise: Array<Promise<IPeserta>> = []
+        peserta.forEach((item) => {
+          item.tim = tim._id
+          promise.push(this.pesertaService.daftar(item as any, tim._id))
+        })
+        Promise.all(promise).then(() => {
+          this.setState({ loading: false })
+          this.props.history.push("/login")
+        })
+      }
     })
   }
 
@@ -218,18 +226,20 @@ export default class Register extends Component<RouteComponentProps, IState> {
                   </Grid.Column>
 
                   <Grid.Column>
-                    <Button
-                      type="submit"
-                      color="green"
-                      content={
-                        this.state.loading ? (
-                          <Loader active inline inverted size="small" />
-                        ) : (
-                          "Selesai"
-                        )
-                      }
-                      floated="right"
-                    />
+                    {this.state.step === steps.length - 1 && (
+                      <Button
+                        type="submit"
+                        color="green"
+                        content={
+                          this.state.loading ? (
+                            <Loader active inline inverted size="small" />
+                          ) : (
+                            "Selesai"
+                          )
+                        }
+                        floated="right"
+                      />
+                    )}
                   </Grid.Column>
                 </Grid>
               </Form>

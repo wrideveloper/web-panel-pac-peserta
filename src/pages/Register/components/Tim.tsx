@@ -61,6 +61,10 @@ export class Tim extends Component<{}, IState> {
         </Form.Field>
 
         <Form.Field>
+          <Message
+            color="yellow"
+            content="Apabila universitas tidak ditemukan, silahkan hubungi contact person"
+          />
           <Field
             name="universitas"
             render={({ form }: FieldProps) => (

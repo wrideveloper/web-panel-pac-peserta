@@ -33,18 +33,18 @@ export default class JenisPengumpulan extends Component<{}, IState> {
       .then((jenisPengumpulan) => this.setState({ jenisPengumpulan }))
   }
 
-  public getFilteredJenisPengumpulan() {
-    const id = (JSON.parse(localStorage.getItem("authUser") || "{}") as ITim)
-      .status._id
-    const date = new Date()
+  // public getFilteredJenisPengumpulan() {
+  //   const id = (JSON.parse(localStorage.getItem("authUser") || "{}") as ITim)
+  //     .status._id
+  //   const date = new Date()
 
-    return this.state.jenisPengumpulan.filter(
-      (item) =>
-        item.status._id === id &&
-        date.getTime() >= new Date(item.timeline.tgl_mulai).getTime() &&
-        date.getTime() <= new Date(item.timeline.tgl_selesai).getTime(),
-    )
-  }
+  //   return this.state.jenisPengumpulan.filter(
+  //     (item) =>
+  //       item.status._id === id &&
+  //       date.getTime() >= new Date(item.timeline.tgl_mulai).getTime() &&
+  //       date.getTime() <= new Date(item.timeline.tgl_selesai).getTime(),
+  //   )
+  // }
 
   public getPengumpulan = () => {
     this.setState({ loading: true })
@@ -86,7 +86,7 @@ export default class JenisPengumpulan extends Component<{}, IState> {
         type: "option",
         validations: ["required"],
         optionData: {
-          data: this.getFilteredJenisPengumpulan(),
+          data: this.state.jenisPengumpulan,
           textKey: "nama",
           valueKey: "_id",
         },
@@ -106,9 +106,6 @@ export default class JenisPengumpulan extends Component<{}, IState> {
         />
         <Container schema={schema}>
           <CreateButton text="Tambah" />
-          <Message warning>
-            Pastikan URL file benar dan dapat diakses, karena tidak bisa diedit
-          </Message>
           <Table.Container
             data={this.state.pengumpulan}
             loading={this.state.loading}

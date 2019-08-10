@@ -5,7 +5,7 @@ import { ServiceGenerator } from "./ServiceGenerator"
 export class PesertaService extends ServiceGenerator<IPeserta> {
   protected endpoint = api.servicePAC
 
-  public daftar(input: IPeserta, idTim: string) {
+  public daftar(input: Partial<IPeserta>, idTim: string) {
     return new Promise<IPeserta>((resolve, reject) => {
       axios
         .post(this.endpoint + `tim/${idTim}/peserta/`, input, {

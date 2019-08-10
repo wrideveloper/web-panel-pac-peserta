@@ -21,7 +21,7 @@ export class ServiceGenerator<T> {
     })
   }
 
-  public create(input: T) {
+  public create(input: Partial<T>) {
     return new Promise<T>((resolve, reject) => {
       axios
         .post(this.endpoint, input, { headers: this.getHeader() })
@@ -30,7 +30,7 @@ export class ServiceGenerator<T> {
     })
   }
 
-  public update(input: T, id: string) {
+  public update(input: Partial<T>, id: string) {
     return new Promise<T>((resolve, reject) => {
       axios
         .put(this.endpoint + id, input, { headers: this.getHeader() })

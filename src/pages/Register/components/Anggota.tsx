@@ -6,6 +6,7 @@ import {
   FieldArrayRenderProps,
   FieldProps,
   Formik,
+  FormikActions,
 } from "formik"
 import React, { Component } from "react"
 import { Button, Card, Form, Grid, Input, Message } from "semantic-ui-react"
@@ -25,9 +26,14 @@ const initialValues: IFormState = {
 }
 
 export class Anggota extends Component {
-  public addPeserta(peserta: any, fieldArray: FieldArrayRenderProps) {
+  public addPeserta(
+    peserta: any,
+    fieldArray: FieldArrayRenderProps,
+    form: FormikActions<IFormState>,
+  ) {
     peserta._id = new ObjectID().toHexString()
     fieldArray.push(peserta)
+    form.resetForm()
   }
 
   public getValidationSchema(nim: string[]) {
@@ -52,7 +58,9 @@ export class Anggota extends Component {
               />
               <Formik
                 initialValues={initialValues}
-                onSubmit={(peserta) => this.addPeserta(peserta, fieldArray)}
+                onSubmit={(peserta, form) =>
+                  this.addPeserta(peserta, fieldArray, form)
+                }
                 validationSchema={this.getValidationSchema(
                   fieldArray.form.values.peserta.map((item: any) => item.nim),
                 )}

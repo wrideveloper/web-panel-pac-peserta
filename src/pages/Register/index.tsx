@@ -66,8 +66,6 @@ interface IFormState {
     _id: string
     nama: string
     nim: string
-    ktm: File
-    foto: File
     tim: string,
   }>
 }
@@ -142,28 +140,37 @@ export default class Register extends Component<RouteComponentProps, IState> {
       }))
   }
 
-  public submit = (
+  public registerPeserta = (
+    peserta: Array<Partial<IPeserta>>,
+    idTim: string,
+  ) => {
+    const promise: Array<Promise<IPeserta>> = []
+    peserta.forEach((item) => {
+      promise.push(this.pesertaService.daftar(item, idTim))
+    })
+    return Promise.all(promise)
+  }
+
+  public registerTim = (tim: Partial<ITim>) => {
+    return this.timService.create(tim)
+  }
+
+  public submit = async (
     values: IFormState,
     formikAction: FormikActions<IFormState>,
   ) => {
     this.setState({ loading: true })
     const { konfirmasi, peserta, ...rest } = values
-    this.timService.create(rest as any).then((tim: any) => {
-      if (tim.message) {
-        formikAction.setFieldError("username", "username sudah ada")
-        this.setState({ loading: false })
-      } else {
-        const promise: Array<Promise<IPeserta>> = []
-        peserta.forEach((item) => {
-          item.tim = tim._id
-          promise.push(this.pesertaService.daftar(item as any, tim._id))
-        })
-        Promise.all(promise).then(() => {
-          this.setState({ loading: false })
-          this.props.history.push("/login")
-        })
-      }
-    })
+
+    const tim: any = await this.registerTim(rest as any)
+    if (tim.message) {
+      formikAction.setFieldError("username", "username sudah ada")
+      this.setState({ loading: false })
+    } else {
+      await this.registerPeserta(peserta as any, tim._id)
+      this.setState({ loading: false })
+      this.props.history.push("/login")
+    }
   }
 
   public render() {

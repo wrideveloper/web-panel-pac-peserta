@@ -169,7 +169,7 @@ export default class Register extends Component<RouteComponentProps, IState> {
     } else {
       await this.registerPeserta(peserta as any, tim._id)
       this.setState({ loading: false })
-      this.props.history.push("/login")
+      this.props.history.push(`${process.env.PUBLIC_URL}/login`)
     }
   }
 

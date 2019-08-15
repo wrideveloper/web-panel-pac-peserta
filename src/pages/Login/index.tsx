@@ -26,7 +26,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
   public timService = new TimService()
 
   public redirectIfAuthenticated(isLoggedIn: boolean) {
-    if (isLoggedIn) this.props.history.push("/")
+    if (isLoggedIn) this.props.history.push(`${process.env.PUBLIC_URL}/`)
   }
 
   public changeValue(value: string, name: "username" | "password") {
@@ -49,7 +49,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
       this.setState({ loading: false })
       if (data.success && data.token) {
         context.login(data.token, (jwt.decode(data.token) as any).data, () => {
-          this.props.history.push("/")
+          this.props.history.push(`${process.env.PUBLIC_URL}/`)
         })
       } else {
         this.resetValue()
@@ -113,7 +113,7 @@ export default class Login extends Component<RouteComponentProps, IState> {
                     onClick={() => this.login(context)}
                   />
                   <br />
-                  <Link to="/register">
+                  <Link to={`${process.env.PUBLIC_URL}/register`}>
                     <Button color="orange" fluid content="Daftar" />
                   </Link>
                 </Card.Content>
